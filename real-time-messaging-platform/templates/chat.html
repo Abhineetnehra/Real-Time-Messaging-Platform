@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Real Time Chat</title>
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+
+<body>
+
+<h2>Real-Time Messaging Platform</h2>
+
+<input id="room" placeholder="Room name">
+<button onclick="joinRoom()">Join Room</button>
+
+<br><br>
+
+<input id="msg" placeholder="Message">
+<button onclick="sendMessage()">Send</button>
+
+<ul id="messages"></ul>
+
+<script>
+var socket = io();
+
+function joinRoom(){
+    var room = document.getElementById("room").value;
+    socket.emit("join_room",{room:room});
+}
+
+function sendMessage(){
+
+    var msg = document.getElementById("msg").value;
+    var room = document.getElementById("room").value;
+
+    socket.emit("send_message",{
+        user:"guest",
+        room:room,
+        text:msg
+    });
+}
+
+socket.on("message",function(data){
+
+    var li = document.createElement("li");
+    li.innerText = (data.user ? data.user + ": " : "") + (data.text || data.msg);
+
+    document.getElementById("messages").appendChild(li);
+});
+</script>
+
+</body>
+</html>
